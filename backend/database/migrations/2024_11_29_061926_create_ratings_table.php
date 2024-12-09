@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer('user_id')->unsigned();
             $table->integer('package_id')->unsigned();
+            $table->integer('booking_id')->unsigned();
             $table->string('rating');
             $table->string('review');
             $table->enum('status', ['active', 'inactive'])->default('active');

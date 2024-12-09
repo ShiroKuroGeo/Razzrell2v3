@@ -16,7 +16,7 @@
           <router-link to="/" class="nav-link" @click="closeMenu">Home</router-link>
           <router-link to="/packages" class="nav-link" @click="closeMenu">Packages</router-link>
           <router-link to="/gallery" class="nav-link" @click="closeMenu">Gallery</router-link>
-          <router-link to="/about" class="nav-link" @click="closeMenu">About Us</router-link>
+          <router-link to="/about-us" class="nav-link" @click="closeMenu">About Us</router-link>
           <router-link to="/contact" class="nav-link" @click="closeMenu">Contact</router-link>
         </div>
 

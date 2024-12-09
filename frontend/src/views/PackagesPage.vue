@@ -94,8 +94,9 @@ export default {
           image: pkg.package_image ? `http://127.0.0.1:8000/storage/${pkg.package_image}` : null,
           inclusions: pkg.package_inclusion ? JSON.parse(pkg.package_inclusion) : [],
           status: pkg.status,
-          rating: 0,
-          bookingsCount: 0
+          rating: pkg.rating,
+          reviewsCount: pkg.reviewsCount,
+          bookingsCount: pkg.bookingsCount
         }));
 
       } catch (error) {

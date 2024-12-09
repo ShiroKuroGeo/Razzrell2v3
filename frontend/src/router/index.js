@@ -9,6 +9,7 @@ import ServicesPage from '@/views/ServicesPage.vue';
 import GalleryPage from '@/views/GalleryPage.vue';
 import ContactPage from '@/views/ContactPage.vue';
 import BookingPage from '@/views/BookingPage.vue';
+import AboutUsPage from '@/views/AboutUs.vue';
 import BookingPageView from '@/views/BookingPageView.vue';
 import LoginPage from '@/views/auth/LoginPage.vue';
 import bookingUserManage from '@/views/bookingUserManage.vue';
@@ -53,6 +54,11 @@ const routes = [
     path: '/contact',
     name: 'contact',
     component: ContactPage
+  },
+  {
+    path: '/about-us',
+    name: 'AboutUs',
+    component: AboutUsPage
   },
   {
     path: '/book',

@@ -59,12 +59,12 @@
       @success="handleportfolioAdded"
     />
 
-    <!-- <EditportfolioModal
+    <EditportfolioModal
       v-if="showEditModal"
       :portfolio="selectedportfolio"
       @close="showEditModal = false"
       @update="handleportfolioUpdated"
-    /> -->
+    />
   </div>
 </template>
 
@@ -73,7 +73,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useAuth } from '@/composables/useAuth';
 import AdminSidebar from '@/components/admin/AdminSidebar.vue';
 import AddportfolioModal from '@/components/admin/AddportfolioModal.vue';
-// import EditportfolioModal from '@/components/admin/EditportfolioModal.vue';
+import EditportfolioModal from '@/components/admin/EditportfolioModal.vue';
 import ConfirmationModal from '@/components/ui/ConfirmationModal.vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -83,7 +83,7 @@ export default {
   components: {
     AdminSidebar,
     AddportfolioModal,
-    // EditportfolioModal,
+    EditportfolioModal,
     ConfirmationModal
   },
   setup() {
@@ -125,6 +125,10 @@ export default {
 
     const openAddportfolioModal = () => {
       showAddModal.value = true;
+    };
+
+    const openDeleteportfolioModal = () => {
+      showDeleteModal.value = true;
     };
 
     const editportfolio = (pkg) => {
@@ -213,9 +217,11 @@ export default {
       filteredportfolios,
       handleSearch,
       deleteportfolio,
+      editportfolio,
       formatNumber,
       openAddportfolioModal,
       confirmDeleteportfolio,
+      showEditModal,
       handleportfolioAdded,
       handleportfolioUpdated,
       showAddModal,

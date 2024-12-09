@@ -25,4 +25,14 @@ class Package extends Model
     {
         return $this->belongsTo(Guest::class);
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

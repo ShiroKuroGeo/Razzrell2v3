@@ -43,10 +43,10 @@
           </div>
           <h3>{{ service.title }}</h3>
           <p>{{ service.description }}</p>
-          <router-link :to="service.link" class="learn-more">
+          <!-- <router-link :to="service.link" class="learn-more">
             Learn More
             <i class="fas fa-chevron-right"></i>
-          </router-link>
+          </router-link> -->
         </div>
       </div>
     </section>
@@ -146,7 +146,7 @@
         <button class="close-gallery" @click="closeGallery">
           <i class="fas fa-times"></i>
         </button>
-        <img :src="selectedImage.full" :alt="selectedImage.title" />
+        <img :src="getImageUrl(selectedImage.image)" :alt="selectedImage.image" />
         <div class="gallery-modal-info">
           <h3>{{ selectedImage.title }}</h3>
           <p>{{ selectedImage.description }}</p>
@@ -177,29 +177,25 @@ const services = [
     id: 1,
     title: 'Weddings',
     description: 'Create your perfect wedding day with our comprehensive planning services.',
-    icon: 'fas fa-rings',
-    link: '/services/weddings',
+    icon: 'fas fa-church',
   },  
   {
     id: 2,
     title: 'Corporate Events',
     description: 'Professional event planning for conferences, meetings, and team building.',
     icon: 'fas fa-briefcase',
-    link: '/services/corporate',
   },
   {
     id: 3,
     title: 'Social Gatherings',
     description: 'From birthdays to anniversaries, we make every celebration special.',
     icon: 'fas fa-glass-cheers',
-    link: '/services/social',
   },
   {
     id: 4,
     title: 'Themed Parties',
     description: 'Unique and creative themed events that leave lasting impressions.',
     icon: 'fas fa-hat-wizard',
-    link: '/services/themed',
   },
 ];
 
@@ -281,17 +277,7 @@ const stats = [
   },
 ];
 
-const galleryImages = [
-  {
-    id: 1,
-    title: 'Elegant Wedding',
-    category: 'Wedding',
-    thumbnail: '@/assets/gallery/wedding-thumb.jpg',
-    full: '@/assets/gallery/wedding-full.jpg',
-    description: 'A beautiful beachside wedding ceremony.',
-  },
-  // Add more gallery images...
-];
+const galleryImages = [];
 
 const nextTestimonial = () => {
   if (currentTestimonial.value < testimonials.length - 1) {
@@ -310,7 +296,7 @@ const setTestimonial = (index) => {
 };
 
 const openGallery = (imageId) => {
-  selectedImage.value = galleryImages.find(img => img.id === imageId);
+  selectedImage.value = portfolios.value.find(img => img.id === imageId);
 };
 
 const closeGallery = () => {
@@ -482,7 +468,7 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
 }
 

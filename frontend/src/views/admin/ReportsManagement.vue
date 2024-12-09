@@ -1,6 +1,5 @@
 <template>
   <div class="reports-management">
-    
     <main class="management-content">
       <div class="page-header">
         <h1>Reports Management</h1>
@@ -30,24 +29,24 @@
           </div>
           
           <div class="chart-container">
-            <LineChart :data="revenueData" :options="chartOptions" />
+            <canvas ref="revenueChart"></canvas>
           </div>
 
           <div class="stats-grid">
             <div class="stat-item">
               <span class="label">Total Revenue</span>
-              <span class="value">₱{{ formatNumber(stats.totalRevenue) }}</span>
-              <span class="trend" :class="{ up: stats.revenueTrend > 0 }">
-                <i class="fas" :class="stats.revenueTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-                {{ Math.abs(stats.revenueTrend) }}%
+              <span class="value">₱150,000</span>
+              <span class="trend up">
+                <i class="fas fa-arrow-up"></i>
+                12%
               </span>
             </div>
             <div class="stat-item">
               <span class="label">Average Order Value</span>
-              <span class="value">₱{{ formatNumber(stats.averageOrderValue) }}</span>
-              <span class="trend" :class="{ up: stats.aovTrend > 0 }">
-                <i class="fas" :class="stats.aovTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-                {{ Math.abs(stats.aovTrend) }}%
+              <span class="value">₱25,000</span>
+              <span class="trend up">
+                <i class="fas fa-arrow-up"></i>
+                8%
               </span>
             </div>
           </div>
@@ -57,31 +56,31 @@
         <div class="report-card">
           <div class="report-header">
             <h3>Bookings by Event Type</h3>
-            <button class="export-btn" @click="exportBookingsReport">
+            <button class="export-btn">
               <i class="fas fa-download"></i>
               Export
             </button>
           </div>
           
           <div class="chart-container">
-            <DoughnutChart :data="bookingsData" :options="chartOptions" />
+            <canvas ref="bookingsChart"></canvas>
           </div>
 
           <div class="stats-grid">
             <div class="stat-item">
               <span class="label">Total Bookings</span>
-              <span class="value">{{ stats.totalBookings }}</span>
-              <span class="trend" :class="{ up: stats.bookingsTrend > 0 }">
-                <i class="fas" :class="stats.bookingsTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-                {{ Math.abs(stats.bookingsTrend) }}%
+              <span class="value">245</span>
+              <span class="trend up">
+                <i class="fas fa-arrow-up"></i>
+                15%
               </span>
             </div>
             <div class="stat-item">
               <span class="label">Completion Rate</span>
-              <span class="value">{{ stats.completionRate }}%</span>
-              <span class="trend" :class="{ up: stats.completionTrend > 0 }">
-                <i class="fas" :class="stats.completionTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-                {{ Math.abs(stats.completionTrend) }}%
+              <span class="value">92%</span>
+              <span class="trend up">
+                <i class="fas fa-arrow-up"></i>
+                5%
               </span>
             </div>
           </div>
@@ -91,31 +90,31 @@
         <div class="report-card">
           <div class="report-header">
             <h3>Customer Analytics</h3>
-            <button class="export-btn" @click="exportCustomerReport">
+            <button class="export-btn">
               <i class="fas fa-download"></i>
               Export
             </button>
           </div>
           
           <div class="chart-container">
-            <BarChart :data="customerData" :options="chartOptions" />
+            <canvas ref="customerChart"></canvas>
           </div>
 
           <div class="stats-grid">
             <div class="stat-item">
               <span class="label">Active Users</span>
-              <span class="value">{{ stats.activeUsers }}</span>
-              <span class="trend" :class="{ up: stats.usersTrend > 0 }">
-                <i class="fas" :class="stats.usersTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-                {{ Math.abs(stats.usersTrend) }}%
+              <span class="value">1,250</span>
+              <span class="trend up">
+                <i class="fas fa-arrow-up"></i>
+                18%
               </span>
             </div>
             <div class="stat-item">
               <span class="label">Customer Satisfaction</span>
-              <span class="value">{{ stats.satisfaction }}%</span>
-              <span class="trend" :class="{ up: stats.satisfactionTrend > 0 }">
-                <i class="fas" :class="stats.satisfactionTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-                {{ Math.abs(stats.satisfactionTrend) }}%
+              <span class="value">95%</span>
+              <span class="trend up">
+                <i class="fas fa-arrow-up"></i>
+                3%
               </span>
             </div>
           </div>
@@ -125,32 +124,72 @@
         <div class="report-card">
           <div class="report-header">
             <h3>Popular Packages</h3>
-            <button class="export-btn" @click="exportPackagesReport">
+            <button class="export-btn">
               <i class="fas fa-download"></i>
               Export
             </button>
           </div>
 
           <div class="packages-list">
-            <div v-for="pkg in popularPackages" :key="pkg.id" class="package-item">
+            <div class="package-item">
               <div class="package-info">
-                <span class="package-name">{{ pkg.name }}</span>
-                <span class="event-type" :class="pkg.eventType.toLowerCase()">
-                  {{ pkg.eventType }}
-                </span>
+                <span class="package-name">Premium Wedding Package</span>
+                <span class="event-type wedding">Wedding</span>
               </div>
               <div class="package-stats">
                 <div class="stat">
                   <span class="label">Bookings</span>
-                  <span class="value">{{ pkg.bookings }}</span>
+                  <span class="value">45</span>
                 </div>
                 <div class="stat">
                   <span class="label">Revenue</span>
-                  <span class="value">₱{{ formatNumber(pkg.revenue) }}</span>
+                  <span class="value">₱1.2M</span>
                 </div>
                 <div class="stat">
                   <span class="label">Rating</span>
-                  <span class="value">{{ pkg.rating.toFixed(1) }}</span>
+                  <span class="value">4.8</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="package-item">
+              <div class="package-info">
+                <span class="package-name">Deluxe Debut Package</span>
+                <span class="event-type debut">Debut</span>
+              </div>
+              <div class="package-stats">
+                <div class="stat">
+                  <span class="label">Bookings</span>
+                  <span class="value">38</span>
+                </div>
+                <div class="stat">
+                  <span class="label">Revenue</span>
+                  <span class="value">₱950K</span>
+                </div>
+                <div class="stat">
+                  <span class="label">Rating</span>
+                  <span class="value">4.7</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="package-item">
+              <div class="package-info">
+                <span class="package-name">Basic Christening Package</span>
+                <span class="event-type christening">Christening</span>
+              </div>
+              <div class="package-stats">
+                <div class="stat">
+                  <span class="label">Bookings</span>
+                  <span class="value">52</span>
+                </div>
+                <div class="stat">
+                  <span class="label">Revenue</span>
+                  <span class="value">₱780K</span>
+                </div>
+                <div class="stat">
+                  <span class="label">Rating</span>
+                  <span class="value">4.6</span>
                 </div>
               </div>
             </div>
@@ -228,31 +267,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { Line as LineChart, Doughnut as DoughnutChart, Bar as BarChart } from 'vue-chartjs';
-import AdminSidebar from '@/components/admin/AdminSidebar.vue';
-import { useAuth } from '@/composables/useAuth';
+import Chart from 'chart.js/auto';
 
-const { token } = useAuth();
-
-// State
-const periods = ['Day', 'Week', 'Month', 'Year'];
-const selectedPeriod = ref('Month');
 const showGenerateModal = ref(false);
 const isGenerating = ref(false);
-const stats = ref({
-  totalRevenue: 0,
-  averageOrderValue: 0,
-  totalBookings: 0,
-  completionRate: 0,
-  activeUsers: 0,
-  satisfaction: 0,
-  revenueTrend: 0,
-  aovTrend: 0,
-  bookingsTrend: 0,
-  completionTrend: 0,
-  usersTrend: 0,
-  satisfactionTrend: 0
-});
+
+const revenueChart = ref(null);
+const bookingsChart = ref(null);
+const customerChart = ref(null);
 
 const reportForm = ref({
   type: 'revenue',
@@ -261,136 +283,63 @@ const reportForm = ref({
   format: 'pdf'
 });
 
-const popularPackages = ref([]);
-
-// Chart Data
-const revenueData = ref({
-  labels: [],
-  datasets: [{
-    label: 'Revenue',
-    data: [],
-    borderColor: '#4CAF50',
-    tension: 0.4
-  }]
-});
-
-const bookingsData = ref({
-  labels: ['Wedding', 'Debut', 'Christening', 'Kiddie Party'],
-  datasets: [{
-    data: [],
-    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
-  }]
-});
-
-const customerData = ref({
-  labels: [],
-  datasets: [{
-    label: 'New Users',
-    data: [],
-    backgroundColor: '#4CAF50'
-  }]
-});
-
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false
-};
-
-// Methods
-const formatNumber = (num) => {
-  return num.toLocaleString();
-};
-
-const fetchReportData = async () => {
-  try {
-    const response = await fetch(`http://localhost:3000/api/admin/reports/dashboard?period=${selectedPeriod.value.toLowerCase()}`, {
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      }
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      stats.value = data.stats;
-      revenueData.value.labels = data.revenueData.labels;
-      revenueData.value.datasets[0].data = data.revenueData.values;
-      bookingsData.value.datasets[0].data = data.bookingsData;
-      customerData.value.labels = data.customerData.labels;
-      customerData.value.datasets[0].data = data.customerData.values;
-      popularPackages.value = data.popularPackages;
+onMounted(() => {
+  // Revenue Chart
+  new Chart(revenueChart.value, {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [{
+        label: 'Revenue',
+        data: [65000, 85000, 75000, 95000, 120000, 150000],
+        borderColor: '#4CAF50',
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
     }
-  } catch (error) {
-    console.error('Error fetching report data:', error);
-  }
-};
+  });
 
-const generateReport = () => {
-  showGenerateModal.value = true;
-};
-
-const handleGenerateReport = async () => {
-  try {
-    isGenerating.value = true;
-
-    const response = await fetch('http://localhost:3000/api/admin/reports/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token.value}`
-      },
-      body: JSON.stringify(reportForm.value)
-    });
-
-    if (response.ok) {
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `report-${reportForm.value.type}-${reportForm.value.startDate}.${reportForm.value.format}`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      showGenerateModal.value = false;
+  // Bookings Chart
+  new Chart(bookingsChart.value, {
+    type: 'doughnut',
+    data: {
+      labels: ['Wedding', 'Debut', 'Christening', 'Kiddie Party'],
+      datasets: [{
+        data: [45, 25, 20, 10],
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
     }
-  } catch (error) {
-    console.error('Error generating report:', error);
-  } finally {
-    isGenerating.value = false;
-  }
-};
+  });
 
-const exportBookingsReport = () => {
-  reportForm.value = {
-    type: 'bookings',
-    startDate: new Date().toISOString().split('T')[0],
-    endDate: new Date().toISOString().split('T')[0],
-    format: 'excel'
-  };
-  handleGenerateReport();
-};
-
-const exportCustomerReport = () => {
-  reportForm.value = {
-    type: 'customers',
-    startDate: new Date().toISOString().split('T')[0],
-    endDate: new Date().toISOString().split('T')[0],
-    format: 'excel'
-  };
-  handleGenerateReport();
-};
-
-const exportPackagesReport = () => {
-  reportForm.value = {
-    type: 'packages',
-    startDate: new Date().toISOString().split('T')[0],
-    endDate: new Date().toISOString().split('T')[0],
-    format: 'excel'
-  };
-  handleGenerateReport();
-};
-
-onMounted(fetchReportData);
+  // Customer Chart
+  new Chart(customerChart.value, {
+    type: 'bar',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [{
+        label: 'New Users',
+        data: [120, 150, 180, 220, 280, 350],
+        backgroundColor: '#4CAF50'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+});
 </script>
+
+<style scoped>
+/* ... (keep existing styles) ... */
+</style>
 
 <style scoped>
 .reports-management {

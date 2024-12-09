@@ -20,7 +20,7 @@
 
     <div class="sidebar-footer">
       <div class="user-info">
-        <img :src="user?.avatar || '/default-avatar.png'" alt="User" />
+        <img :src="user?.avatar || '/src/assets/logo.png'" alt="User" />
         <div>
           <p class="user-name" style="text-transform: capitalize;"> {{ user?.last_name }}, {{ user?.first_name }}</p>
           <p class="user-role" style="text-transform: capitalize;">{{ user?.role || 'Administrator' }}</p>
@@ -107,7 +107,12 @@ const navigationItems = computed(() => {
         path: '/admin/bookings',
         icon: 'fas fa-calendar-alt',
         badge: stats.value.totalBookings
-      }
+      },
+      {
+        name: 'Reports',
+        path: '/admin/reports',
+        icon: 'fas fa-chart-bar'
+      },
     ];
   }
   

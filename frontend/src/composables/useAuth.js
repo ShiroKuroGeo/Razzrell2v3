@@ -58,7 +58,6 @@ export function useAuth() {
     localStorage.removeItem('user_info');
     localStorage.removeItem('user_role');
     localStorage.removeItem('user');
-    router.push('/login');
   };
 
   const fetchUser = async () => {

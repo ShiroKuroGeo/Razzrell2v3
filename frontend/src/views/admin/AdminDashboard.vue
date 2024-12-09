@@ -19,7 +19,7 @@
 
         <div class="card">
           <div class="card-info">
-            <h3>Revenue</h3>
+            <h3>Revenue ({{ currentYear }})</h3>
             <div class="card-value">₱{{ formatNumber(stats.totalRevenue) }}</div>
             <div class="card-trend" :class="{ up: stats.revenueTrend > 0 }">
               <i class="fas" :class="stats.revenueTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
@@ -48,10 +48,10 @@
         <div class="card">
           <div class="card-info">
             <h3>Satisfaction Rate</h3>
-            <div class="card-value">{{ stats.satisfactionRate }}%</div>
-            <div class="card-trend" :class="{ up: stats.satisfactionTrend > 0 }">
-              <i class="fas" :class="stats.satisfactionTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-              {{ Math.abs(stats.satisfactionTrend) }}% from last month
+            <div class="card-value">{{ satisfactionRate }}%</div>
+            <div class="card-trend" :class="{ up: satisfactionTrend > 0 }">
+              <i class="fas" :class="satisfactionTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+              {{ Math.abs(satisfactionTrend) }}% from last month
             </div>
           </div>
           <div class="card-icon">
@@ -63,11 +63,11 @@
       <!-- Charts Section -->
       <div class="charts-section">
         <div class="chart-container">
-          <h3>Revenue Overview</h3>
+          <h3>Revenue Overview ({{ currentYear }})</h3>
           <LineChart :data="revenueData" :options="chartOptions" />
         </div>
         <div class="chart-container">
-          <h3>Bookings by Event Type</h3>
+          <h3>Bookings by Event Type </h3>
           <DoughnutChart :data="eventTypeData" :options="chartOptions" />
         </div>
       </div>
@@ -173,14 +173,16 @@ const stats = ref({
   totalBookings: 0,
   totalRevenue: '',
   activeUsers: 0,
-  satisfactionRate: 0,
   bookingTrend: 0,
   revenueTrend: 0,
-  userTrend: 0,
-  satisfactionTrend: 0
+  userTrend: 0
 });
 
+const satisfactionRate = ref(0);
+const satisfactionTrend = ref(0);
+
 const recentBookings = ref([]);
+const currentYear = ref(new Date().getFullYear());
 const user = ref(JSON.parse(localStorage.getItem('user_info')));
 const showBookingModal = ref(false);
 const showAddPackageModal = ref(false);
@@ -189,17 +191,17 @@ const showAddGuestModal = ref(false);
 
 // Chart Data
 const revenueData = ref({
-  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   datasets: [{
     label: 'Revenue',
-    data: [],
+    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     borderColor: '#4CAF50',
     tension: 0.4
   }]
 });
 
 const eventTypeData = ref({
-  labels: ['Wedding', 'Debut', 'Christening', 'Kiddie Party'],
+  labels: [],
   datasets: [{
     data: [],
     backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
@@ -235,7 +237,6 @@ const fetchBookings = async () => {
   }, 0);
 
   recentBookings.value = response.data;
-  console.log(response.data);
 };
 
 const fetchUser = async () => {
@@ -247,23 +248,49 @@ const fetchUser = async () => {
   stats.value.activeUsers = response.data.filter(user => user.status === 'active').length;
 };
 
-const fetchDashboardData = async () => {
+const fetchEventTypeStats = async () => {
   try {
-    const response = await fetch('http://localhost:3000/api/admin/dashboard', {
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      }
-    });
+    const response = await axios.get('http://127.0.0.1:8000/api/get-event-type-stats');
+    
+    eventTypeData.value = {
+      labels: response.data.data.labels,
+      datasets: [{
+        data: response.data.data.values,
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+      }]
+    };
 
-    if (response.ok) {
-      const data = await response.json();
-      stats.value = data.stats;
-      revenueData.value.datasets[0].data = data.revenueData;
-      eventTypeData.value.datasets[0].data = data.eventTypeData;
-      recentBookings.value = data.recentBookings;
-    }
   } catch (error) {
-    console.error('Error fetching dashboard data:', error);
+    console.error('Error fetching event type stats:', error);
+  }
+};
+
+const fetchMonthlyRevenue = async () => {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/api/get-monthly-revenue');
+    revenueData.value = {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      datasets: [{
+        label: 'Revenue',
+        data: response.data.data,
+        borderColor: '#4CAF50',
+        tension: 0.4
+      }]
+    };
+  } catch (error) {
+    console.error('Error fetching monthly revenue:', error);
+  }
+};
+
+const fetchSatisfactionRate = async () => {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/api/get-satisfaction-rate');
+    if (response.data.status === 200) {
+      satisfactionRate.value = response.data.data.satisfactionRate;
+      satisfactionTrend.value = response.data.data.trend;
+    }``
+  } catch (error) {
+    console.error('Error fetching satisfaction rate:', error);
   }
 };
 
@@ -298,7 +325,9 @@ const handleGuestAdded = () => {
 onMounted(async () => {
   await fetchBookings();
   await fetchUser();
-  // await fetchDashboardData();
+  await fetchEventTypeStats();
+  await fetchMonthlyRevenue();
+  await fetchSatisfactionRate();
 });
 </script>
 

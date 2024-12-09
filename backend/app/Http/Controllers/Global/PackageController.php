@@ -13,7 +13,24 @@ class PackageController extends Controller
 {
     public function index(){
         try{
-            $packages = Package::where('flag', '0')->get();
+            $packages = Package::where('flag', '0')
+                ->with(['ratings' => function($query) {
+                    $query->where('status', 'active');
+                }])
+                ->withCount(['bookings' => function($query) {
+                    $query->whereIn('status', ['pending', 'confirmed', 'ongoing', 'preparing', 'completed']);
+                }])
+                ->get()
+                ->map(function($package) {
+                    $avgRating = $package->ratings->avg('rating') ?? 0;
+                    $package->rating = round($avgRating, 1);
+                    $package->reviewsCount = $package->ratings->count();
+                    $package->bookingsCount = $package->bookings_count;
+                    unset($package->ratings);
+                    unset($package->bookings_count);
+                    return $package;
+                });
+
             return response()->json($packages);
         }
         catch(\Exception $e){

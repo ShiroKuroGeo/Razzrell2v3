@@ -74,7 +74,7 @@
                 </div>
               </td>
               <td>
-                <span class="status" :class="booking.status.toLowerCase()">
+                <span class="status text-capitalize" :class="booking.status.toLowerCase()">
                   {{ booking.status }}
                 </span>
               </td>
@@ -85,11 +85,14 @@
                     <i class="fas fa-eye"></i>
                   </button>
                   <button 
-                    v-if="booking.status === 'pending'"
+                    v-if="booking.status === 'Pending'"
                     @click="cancelBooking(booking)" 
                     class="btn-action cancel"
                   >
                     <i class="fas fa-times"></i>
+                  </button>
+                  <button @click="rateBooking(booking)" class="btn-action check" >
+                    <i class="fas fa-star"></i>
                   </button>
                 </div>
               </td>
@@ -133,6 +136,18 @@
       @confirm="confirmCancelBooking"
       @close="showConfirmModal = false"
     />
+
+    <RateBookingModal
+      v-if="showRateModal"
+      :booking="selectedBooking"
+      @close="showRateModal = false"
+    />
+
+    <ViewBookingsModal
+      v-if="showViewModal"
+      :booking="selectedBooking"
+      @close="showViewModal = false"
+    />
   </div>
 </template>
 
@@ -140,13 +155,17 @@
 import { ref, computed, onMounted } from 'vue';
 import { useAuth } from '@/composables/useAuth';
 import BookingDetailsModal from '@/components/bookings/BookingDetailsModal.vue';
+import RateBookingModal from '@/components/bookings/RateBookingModal.vue';
 import ConfirmationModal from '@/components/ui/ConfirmationModal.vue';
+import ViewBookingsModal from '@/components/admin/ViewBookingsModal.vue';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const { user, token } = useAuth();
 
 // State
 const bookings = ref([]);
+const ratings = ref([]);
 const searchQuery = ref('');
 const statusFilter = ref('');
 const eventTypeFilter = ref('');
@@ -156,6 +175,8 @@ const sortField = ref('eventDate');
 const sortDirection = ref('desc');
 const showBookingModal = ref(false);
 const showConfirmModal = ref(false);
+const showRateModal = ref(false);
+const showViewModal = ref(false);
 const selectedBooking = ref(null);
 
 // Computed
@@ -210,6 +231,16 @@ const fetchBookings = async () => {
   }
 };
 
+const fetchRatings = async () => {
+  try {
+    const userInfo = JSON.parse(localStorage.getItem('user_info'));
+    const response = await axios.get(`http://127.0.0.1:8000/api/get-all-ratings/${userInfo.id}`);
+    ratings.value = response.data.ratings;
+  } catch (error) {
+    console.error('Error fetching ratings:', error);
+  }
+};
+
 const handleSearch = () => {
   currentPage.value = 1;
 };
@@ -253,12 +284,29 @@ const formatNumber = (num) => {
 
 const viewBooking = (booking) => {
   selectedBooking.value = booking;
-  showBookingModal.value = true;
+  showViewModal.value = true;
 };
 
 const cancelBooking = (booking) => {
   selectedBooking.value = booking;
   showConfirmModal.value = true;
+};
+
+const rateBooking = (booking) => {
+  const packid = booking.package.id;
+  const userid = booking.user_id;
+  const bookingid = booking.id;
+  if(ratings.value.some(rating => rating.package_id === packid && rating.user_id === userid && rating.booking_id === bookingid)){
+    Swal.fire({
+      title: 'Error',
+      text: 'You have already rated this booking',
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+  }else{
+    selectedBooking.value = booking;
+    showRateModal.value = true;
+  }
 };
 
 const confirmCancelBooking = async () => {
@@ -284,6 +332,7 @@ const confirmCancelBooking = async () => {
 
 onMounted(async () => {
   await fetchBookings();
+  await fetchRatings();
 });
 </script>
 
@@ -458,10 +507,26 @@ td {
 
 .btn-action.view {
   background: var(--primary-color);
+  padding: 0.5rem 1rem;
+}
+
+btn-action.cancel {
+  background: red;
+  padding: 0.5rem 1rem;
+}
+
+.btn-action.check {
+  background: white;
+  padding: 0.5rem 1rem;
+  color: orange;
 }
 
 .btn-action.cancel {
   background: var(--danger-color);
+}
+
+.text-capitalize {
+  text-transform: capitalize;
 }
 
 .pagination {

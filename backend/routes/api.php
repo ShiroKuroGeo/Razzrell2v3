@@ -7,7 +7,8 @@ use App\Http\Controllers\Global\PackageController as PackageController;
 use App\Http\Controllers\Admin\GuestController as GuestController;
 use App\Http\Controllers\Global\BookingController as BookingController;
 use App\Http\Controllers\Global\PortfolioController as PortfolioController;
-
+use App\Http\Controllers\Global\RateController as RateController;
+use App\Http\Controllers\Admin\DashboardControler as DashboardControler;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -64,6 +65,16 @@ Route::post('/update-package', [PackageController::class, 'updatePackage']);
 Route::get('/get-all-portfolios', [PortfolioController::class, 'allPortfolios']);
 Route::post('/add-portfolio', [PortfolioController::class, 'addPortfolio']);
 Route::post('/delete-portfolio/{id}', [PortfolioController::class, 'deletePortfolio']);
+Route::post('/update-portfolio', [PortfolioController::class, 'updatePortfolio']);
 
 // Contact Us
 Route::get('/get-all-contact-us', [UserController::class, 'getAllContactUs']);
+
+// Rating
+Route::post('/add-rating', [RateController::class, 'addRating']);
+Route::get('/get-all-ratings/{id}', [RateController::class, 'getAllRatings']);
+
+// Dashboard
+Route::get('/get-event-type-stats', [DashboardControler::class, 'getEventTypeStats']);
+Route::get('/get-monthly-revenue', [DashboardControler::class, 'getMonthlyRevenue']);
+Route::get('/get-satisfaction-rate', [DashboardControler::class, 'getSatisfactionRate']);
